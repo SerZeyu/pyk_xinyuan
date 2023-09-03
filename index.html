@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>pyk心愿单</title>
+  <link rel="stylesheet" href="./iconfont/iconfont.css">
+  <link rel="stylesheet" href="css/index.css" />
+</head>
+
+<body>
+  <h1>pyk心愿单</h1>
+  <form class="info" autocomplete="off">
+    <select name="class" class="class">
+      <option value="餐厅">餐厅</option>
+      <option value="旅游">旅游</option>
+      <option value="美食">美食</option>
+      <option value="电影">电影</option>
+      <option value="化妆品">化妆品</option>
+      <option value="生活用品">生活用品</option>
+      <option value="设备">设备</option>
+      <option value="其他">其他</option>
+    </select>
+    <input type="text" class="uname" name="uname" placeholder="名称/地点/品牌" />
+    <input type="text" class="age" name="age" placeholder="备注:时间/要求" />
+    <input type="text" class="salary" name="salary" placeholder="价格" />
+    <!-- <select name="gender" class="gender">
+      <option value="男">男</option>
+      <option value="女">女</option>
+    </select> -->
+    
+    <button class="add">
+      <i class="iconfont icon-tianjia"></i>添加
+    </button>
+  </form>
+
+  <div class="title">共有数据<span>0</span>条</div>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>类别</th>
+        <th>名称</th>
+        
+        <th>价格</th>
+        <th>备注</th>
+        <th>录入时间</th>
+        <th>操作</th>
+       
+      </tr>
+    </thead>
+    <tbody>
+      <!-- <tr>
+        
+      </tr> -->
+    </tbody>
+  </table>
+  <script>
+    const uname = document.querySelector('.uname')
+    const age = document.querySelector('.age')
+    // const gender = document.querySelector('.gender')
+    const salary = document.querySelector('.salary')
+    const city = document.querySelector('.class')
+    const arr = JSON.parse(localStorage.getItem('data')) || []
+    const date = new Date()
+    const tbody = document.querySelector('tbody')
+    const items = document.querySelectorAll('[name]') //属性选择器
+    const span = document.querySelector('.title span')
+    render()
+    // 录入
+    const info = document.querySelector('.info')
+    info.addEventListener('submit',function(e){
+      //阻止默认行为
+      e.preventDefault()
+      // 进行表单验证
+      for(let i =0;i < items.length;i++){
+        if(items[i].value=== ''){
+          return alert('内容不能为空')
+        }
+      }
+      const obj ={
+        stuId:arr.length ? arr[arr.length - 1].stuId + 1 : 1,
+        uname:uname.value,
+        age:age.value,
+        
+        salary:salary.value,
+        class:city.value,
+        time:date.toLocaleString()
+      }
+      arr.push(obj)
+      
+      // 
+      // 清空表单
+      this.reset()
+      render()
+      localStorage.setItem('data',JSON.stringify(arr))
+     })
+     function render(){
+      tbody.innerHTML = ''
+      span.innerHTML = arr.length
+      for(let i = 0;i<arr.length;i++){
+        const tr = document.createElement('tr')
+        tr.innerHTML = `<td>${arr[i].stuId}</td>
+        <td>${arr[i].class}</td>
+        <td>${arr[i].uname}</td>
+        <td>${arr[i].salary}</td>
+        <td>${arr[i].age}</td>
+
+        
+        
+        <td>${arr[i].time}</td>
+        <td>
+          <a href="javascript:" data-id=${i}>
+            <i class="iconfont icon-shanchu"></i>
+            删除
+          </a>
+          <button class="finish" data-id=${i}>已完成</button>
+        </td>`
+        tbody.appendChild(tr)
+      }
+     }
+     tbody.addEventListener('click',function(e){
+      
+      if(e.target.tagName === 'A'){
+        
+        if (confirm('您确定要删除这条数据吗？')) {
+          // 3.3 根据索引号，利用 splice 删除数组这条数据
+          arr.splice(e.target.dataset.id, 1)
+          // 3.4 重新渲染页面 
+          render()
+          // 3.5 把最新 arr 数组存入本地存储
+          localStorage.setItem('data', JSON.stringify(arr))
+        }
+      }
+      
+      if(e.target.tagName === "BUTTON"){
+        arr.splice(e.target.dataset.id,1)
+        if (confirm('您确定完成了吗？')) {
+          // 3.3 根据索引号，利用 splice 删除数组这条数据
+          arr.splice(e.target.dataset.id, 1)
+          // 3.4 重新渲染页面 
+          render()
+          // 3.5 把最新 arr 数组存入本地存储
+          localStorage.setItem('data', JSON.stringify(arr))
+          alert("恭喜您心愿完成！")
+        }
+      }
+     })
+  </script>
+</body>
+
+</html>
